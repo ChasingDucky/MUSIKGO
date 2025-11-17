@@ -8,6 +8,9 @@ import { PlayerBar } from './components/Player/PlayerBar';
 import { AudioPlayer } from './components/Player/AudioPlayer';
 import { Home } from './pages/Home';
 import { Library } from './pages/Library';
+import { Search } from './pages/Search';
+import { AlbumDetail } from './pages/AlbumDetail';
+import { Playlists } from './pages/Playlists';
 
 function App() {
   const { mode, monetPalette } = useThemeStore();
@@ -30,7 +33,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/library" element={<Library />} />
-              <Route path="/search" element={<Box sx={{ p: 4 }}>Search Page Coming Soon</Box>} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/playlists" element={<Playlists />} />
+              <Route path="/album/:id" element={<AlbumDetail />} />
+              <Route path="/playlist/:id" element={<AlbumDetail />} />
               <Route path="/liked" element={<Box sx={{ p: 4 }}>Liked Songs Coming Soon</Box>} />
             </Routes>
           </Box>

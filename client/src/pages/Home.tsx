@@ -1,6 +1,10 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Container, Typography, Grid, Stack } from '@mui/material';
 import { AlbumCard } from '@/components/AlbumCard/AlbumCard';
 import { Album } from '@/types';
+import { useMusicStore } from '@/stores/musicStore';
+import { LoadingSpinner } from '@/components/Common/LoadingSpinner';
 
 // Mock data - will be replaced with API calls
 const mockAlbums: Album[] = [
@@ -61,6 +65,17 @@ const mockAlbums: Album[] = [
 ];
 
 export function Home() {
+  const navigate = useNavigate();
+  const { fetchTracks, isLoading } = useMusicStore();
+
+  useEffect(() => {
+    fetchTracks();
+  }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner message="Loading music..." fullPage />;
+  }
+
   return (
     <Box sx={{ pb: 12 }}>
       <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -79,7 +94,10 @@ export function Home() {
           <Grid container spacing={3}>
             {mockAlbums.map((album) => (
               <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={album.id}>
-                <AlbumCard album={album} />
+                <AlbumCard
+                  album={album}
+                  onClick={(a) => navigate(`/album/${a.id}`)}
+                />
               </Grid>
             ))}
           </Grid>
@@ -92,7 +110,10 @@ export function Home() {
             <Grid container spacing={3}>
               {mockAlbums.slice(0, 4).map((album) => (
                 <Grid item xs={12} sm={6} md={3} key={album.id}>
-                  <AlbumCard album={album} />
+                  <AlbumCard
+                    album={album}
+                    onClick={(a) => navigate(`/album/${a.id}`)}
+                  />
                 </Grid>
               ))}
             </Grid>
@@ -106,7 +127,10 @@ export function Home() {
             <Grid container spacing={3}>
               {mockAlbums.slice(2).map((album) => (
                 <Grid item xs={12} sm={6} md={3} key={album.id}>
-                  <AlbumCard album={album} />
+                  <AlbumCard
+                    album={album}
+                    onClick={(a) => navigate(`/album/${a.id}`)}
+                  />
                 </Grid>
               ))}
             </Grid>

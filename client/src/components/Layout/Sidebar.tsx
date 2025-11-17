@@ -28,7 +28,7 @@ const menuItems = [
 
 const libraryItems = [
   { text: 'Liked Songs', icon: <Favorite />, path: '/liked' },
-  { text: 'Create Playlist', icon: <Add />, path: '/create-playlist' },
+  { text: 'Playlists', icon: <LibraryMusic />, path: '/playlists' },
 ];
 
 export function Sidebar() {
