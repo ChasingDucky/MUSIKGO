@@ -1,10 +1,8 @@
 import {
   Box,
-  IconButton,
   Slider,
   Stack,
   Typography,
-  Card,
   Avatar,
 } from '@mui/material';
 import {
@@ -15,10 +13,13 @@ import {
   Repeat,
   RepeatOne,
   Shuffle,
-  VolumeUp,
-  VolumeOff,
+  Home,
+  Search,
 } from '@mui/icons-material';
 import { usePlayerStore } from '@/stores/playerStore';
+import { LiquidGlass } from '@/components/Common/LiquidGlass';
+import { LiquidGlassButton } from '@/components/Common/LiquidGlassButton';
+import { useNavigate } from 'react-router-dom';
 
 function formatTime(seconds: number): string {
   if (isNaN(seconds)) return '0:00';
@@ -28,6 +29,7 @@ function formatTime(seconds: number): string {
 }
 
 export function PlayerBar() {
+  const navigate = useNavigate();
   const {
     currentTrack,
     isPlaying,
@@ -58,121 +60,220 @@ export function PlayerBar() {
   };
 
   return (
-    <Card
-      sx={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1200,
-        borderRadius: 0,
-        borderTop: 1,
-        borderColor: 'divider',
-        bgcolor: 'background.paper',
-      }}
-    >
-      <Box sx={{ px: 2, py: 1 }}>
-        {/* Progress Bar */}
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-          <Typography variant="caption" sx={{ minWidth: 40, textAlign: 'right' }}>
-            {formatTime(currentTime)}
-          </Typography>
-          <Slider
-            size="small"
-            value={currentTime}
-            max={duration || 100}
-            onChange={handleSeek}
-            sx={{
-              '& .MuiSlider-thumb': {
-                width: 12,
-                height: 12,
-                '&:hover, &.Mui-focusVisible': {
-                  boxShadow: '0px 0px 0px 8px rgba(103, 80, 164, 0.16)',
-                },
-              },
-            }}
-          />
-          <Typography variant="caption" sx={{ minWidth: 40 }}>
-            {formatTime(duration)}
-          </Typography>
-        </Stack>
+    <>
+      {/* SVG Filter Definition */}
+      <svg style={{ display: 'none' }}>
+        <defs>
+          <filter
+            id="liquid_glass_filter"
+            x="0%"
+            y="0%"
+            width="100%"
+            height="100%"
+            filterUnits="objectBoundingBox"
+          >
+            <feDisplacementMap scale="200" />
+          </filter>
+        </defs>
+      </svg>
 
-        {/* Main Controls */}
-        <Stack direction="row" alignItems="center" spacing={2}>
-          {/* Track Info */}
-          <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1, minWidth: 0 }}>
-            <Avatar
-              src={currentTrack.coverUrl}
-              alt={currentTrack.title}
-              variant="rounded"
-              sx={{ width: 56, height: 56 }}
-            />
-            <Box sx={{ minWidth: 0, flex: 1 }}>
-              <Typography variant="body2" noWrap fontWeight={500}>
-                {currentTrack.title}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" noWrap>
-                {currentTrack.artist}
-              </Typography>
-            </Box>
-          </Stack>
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 16,
+          left: 16,
+          right: 16,
+          zIndex: 1200,
+          display: 'flex',
+          gap: 2,
+          px: 2,
+        }}
+      >
+        {/* Home Button */}
+        <LiquidGlassButton onClick={() => navigate('/')} size="medium">
+          <Home sx={{ fontSize: 28, color: 'rgba(255, 255, 255, 0.8)' }} />
+        </LiquidGlassButton>
 
-          {/* Playback Controls */}
-          <Stack direction="row" spacing={1} alignItems="center">
-            <IconButton
-              onClick={toggleShuffle}
-              color={shuffleMode ? 'primary' : 'default'}
-              size="small"
-            >
-              <Shuffle />
-            </IconButton>
-
-            <IconButton onClick={previous} size="small">
-              <SkipPrevious />
-            </IconButton>
-
-            <IconButton
-              onClick={togglePlayPause}
-              size="large"
-              sx={{
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
-                },
-              }}
-            >
-              {isPlaying ? <Pause /> : <PlayArrow />}
-            </IconButton>
-
-            <IconButton onClick={next} size="small">
-              <SkipNext />
-            </IconButton>
-
-            <IconButton onClick={toggleRepeat} color={repeatMode !== 'off' ? 'primary' : 'default'} size="small">
-              {repeatMode === 'one' ? <RepeatOne /> : <Repeat />}
-            </IconButton>
-          </Stack>
-
-          {/* Volume Control */}
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ width: 150 }}>
-            <IconButton size="small" onClick={() => setVolume(volume > 0 ? 0 : 0.7)}>
-              {volume === 0 ? <VolumeOff /> : <VolumeUp />}
-            </IconButton>
+        {/* Main Player */}
+        <LiquidGlass
+          borderRadius="26px"
+          intensity="medium"
+          sx={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            p: 2,
+          }}
+        >
+          {/* Progress Bar */}
+          <Box sx={{ mb: 1.5 }}>
             <Slider
               size="small"
-              value={volume * 100}
-              onChange={handleVolumeChange}
+              value={currentTime}
+              max={duration || 100}
+              onChange={handleSeek}
               sx={{
+                color: 'rgba(255, 255, 255, 0.9)',
+                height: 4,
                 '& .MuiSlider-thumb': {
                   width: 12,
                   height: 12,
+                  backgroundColor: '#fff',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                  '&:hover, &.Mui-focusVisible': {
+                    boxShadow: '0px 0px 0px 8px rgba(255, 255, 255, 0.16)',
+                  },
+                },
+                '& .MuiSlider-track': {
+                  border: 'none',
+                  background: 'linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)',
+                },
+                '& .MuiSlider-rail': {
+                  opacity: 0.3,
+                  backgroundColor: '#fff',
                 },
               }}
             />
+          </Box>
+
+          {/* Controls */}
+          <Stack direction="row" alignItems="center" spacing={2}>
+            {/* Track Info */}
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1, minWidth: 0 }}>
+              <Avatar
+                src={currentTrack.coverUrl}
+                alt={currentTrack.title}
+                variant="rounded"
+                sx={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 2,
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                }}
+              />
+              <Box sx={{ minWidth: 0, flex: 1 }}>
+                <Typography
+                  variant="body1"
+                  noWrap
+                  fontWeight={600}
+                  sx={{ color: 'rgba(255, 255, 255, 0.95)' }}
+                >
+                  {currentTrack.title}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  noWrap
+                  sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
+                >
+                  {currentTrack.artist}
+                </Typography>
+              </Box>
+            </Stack>
+
+            {/* Playback Controls */}
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Box
+                onClick={toggleShuffle}
+                sx={{
+                  cursor: 'pointer',
+                  opacity: shuffleMode ? 1 : 0.6,
+                  transition: 'opacity 0.2s',
+                  '&:hover': { opacity: 1 },
+                }}
+              >
+                <Shuffle sx={{ fontSize: 24, color: 'rgba(255, 255, 255, 0.9)' }} />
+              </Box>
+
+              <Box
+                onClick={previous}
+                sx={{
+                  cursor: 'pointer',
+                  opacity: 0.8,
+                  transition: 'opacity 0.2s',
+                  '&:hover': { opacity: 1 },
+                }}
+              >
+                <SkipPrevious sx={{ fontSize: 32, color: 'rgba(255, 255, 255, 0.9)' }} />
+              </Box>
+
+              <Box
+                onClick={togglePlayPause}
+                sx={{
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 48,
+                  height: 48,
+                  borderRadius: '50%',
+                  bgcolor: 'rgba(255, 255, 255, 0.2)',
+                  backdropFilter: 'blur(10px)',
+                  transition: 'all 0.2s',
+                  '&:hover': {
+                    transform: 'scale(1.1)',
+                    bgcolor: 'rgba(255, 255, 255, 0.3)',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.95)',
+                  },
+                }}
+              >
+                {isPlaying ? (
+                  <Pause sx={{ fontSize: 28, color: '#fff' }} />
+                ) : (
+                  <PlayArrow sx={{ fontSize: 28, color: '#fff' }} />
+                )}
+              </Box>
+
+              <Box
+                onClick={next}
+                sx={{
+                  cursor: 'pointer',
+                  opacity: 0.8,
+                  transition: 'opacity 0.2s',
+                  '&:hover': { opacity: 1 },
+                }}
+              >
+                <SkipNext sx={{ fontSize: 32, color: 'rgba(255, 255, 255, 0.9)' }} />
+              </Box>
+
+              <Box
+                onClick={toggleRepeat}
+                sx={{
+                  cursor: 'pointer',
+                  opacity: repeatMode !== 'off' ? 1 : 0.6,
+                  transition: 'opacity 0.2s',
+                  '&:hover': { opacity: 1 },
+                }}
+              >
+                {repeatMode === 'one' ? (
+                  <RepeatOne sx={{ fontSize: 24, color: 'rgba(255, 255, 255, 0.9)' }} />
+                ) : (
+                  <Repeat sx={{ fontSize: 24, color: 'rgba(255, 255, 255, 0.9)' }} />
+                )}
+              </Box>
+            </Stack>
+
+            {/* Time Display */}
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 100 }}>
+              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                {formatTime(currentTime)}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                /
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                {formatTime(duration)}
+              </Typography>
+            </Stack>
           </Stack>
-        </Stack>
+        </LiquidGlass>
+
+        {/* Search Button */}
+        <LiquidGlassButton onClick={() => navigate('/search')} size="medium">
+          <Search sx={{ fontSize: 28, color: 'rgba(255, 255, 255, 0.8)' }} />
+        </LiquidGlassButton>
       </Box>
-    </Card>
+    </>
   );
 }

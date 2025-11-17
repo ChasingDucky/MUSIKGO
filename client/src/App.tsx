@@ -6,6 +6,7 @@ import { getTheme } from './theme/theme';
 import { Sidebar } from './components/Layout/Sidebar';
 import { PlayerBar } from './components/Player/PlayerBar';
 import { AudioPlayer } from './components/Player/AudioPlayer';
+import { DynamicBackground } from './components/Common/DynamicBackground';
 import { Home } from './pages/Home';
 import { Library } from './pages/Library';
 import { Search } from './pages/Search';
@@ -19,6 +20,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <DynamicBackground />
       <BrowserRouter>
         <Box sx={{ display: 'flex', height: '100vh' }}>
           <Sidebar />
@@ -27,7 +29,7 @@ function App() {
             sx={{
               flexGrow: 1,
               overflow: 'auto',
-              bgcolor: 'background.default',
+              position: 'relative',
             }}
           >
             <Routes>
