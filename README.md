@@ -15,6 +15,15 @@
 - **明暗主题** - 支持浅色和深色模式无缝切换
 - **流畅动画** - Material Design 3标准动画效果
 
+### 💎 液态玻璃视觉效果
+- **多层玻璃材质** - 使用SVG滤镜和背景模糊实现真实玻璃质感
+- **动态背景** - 基于莫奈配色的动画渐变背景
+- **浮动元素** - 三个动画浮动色块，随主题色变化
+- **液态玻璃按钮** - 圆形和圆角两种样式，支持多种尺寸
+- **毛玻璃效果** - Backdrop Filter实现的模糊和半透明效果
+- **多层合成** - 外层置换、模糊覆盖、锐化边缘、内部反射四层叠加
+- **深度感** - 内阴影和高光营造3D玻璃质感
+
 ### 🎵 完整音乐播放器
 - ▶️ **播放控制** - 播放、暂停、上一首、下一首
 - 📊 **进度控制** - 可拖拽进度条，实时显示播放时间
@@ -38,6 +47,9 @@
 - **空状态** - 引导性的空状态设计
 - **响应式设计** - 完美适配各种屏幕尺寸
 - **流畅交互** - 平滑的过渡动画和悬停效果
+- **液态玻璃UI** - iOS风格的液态玻璃界面元素
+- **浮动播放器** - 底部浮动的玻璃质感播放控制栏
+- **动画效果** - 卡片悬停缩放、元素淡入淡出等丰富动画
 
 ## 🛠 技术栈
 
@@ -136,6 +148,9 @@ MUSIKGO/
 │   ├── src/
 │   │   ├── components/            # React组件
 │   │   │   ├── Common/           # 通用组件
+│   │   │   │   ├── LiquidGlass.tsx        # 液态玻璃容器
+│   │   │   │   ├── LiquidGlassButton.tsx  # 液态玻璃按钮
+│   │   │   │   ├── DynamicBackground.tsx  # 动态渐变背景
 │   │   │   │   ├── LoadingSpinner.tsx
 │   │   │   │   ├── ErrorMessage.tsx
 │   │   │   │   ├── EmptyState.tsx
@@ -194,6 +209,32 @@ MUSIKGO/
 ```
 
 ## 🎨 核心功能实现
+
+### 液态玻璃效果系统
+位于 `client/src/components/Common/LiquidGlass.tsx`
+
+**多层玻璃材质实现：**
+- **外层置换层** - SVG滤镜创建玻璃扭曲效果
+- **模糊覆盖层** - Backdrop Filter blur + 半透明背景
+- **锐化边缘层** - 内阴影模拟玻璃边缘光泽
+- **内部反射层** - 多重内阴影营造玻璃反射
+
+```typescript
+// 使用示例
+<LiquidGlass borderRadius="26px" intensity="medium">
+  <YourContent />
+</LiquidGlass>
+
+<LiquidGlassButton onClick={handleClick} size="large">
+  <Icon />
+</LiquidGlassButton>
+```
+
+**动态背景系统：**
+- 基于莫奈配色的实时背景变化
+- 三个动画浮动渐变色块
+- 响应专辑封面颜色提取
+- 平滑的颜色过渡动画
 
 ### 莫奈取色系统
 位于 `client/src/theme/monetColors.ts`
@@ -280,9 +321,12 @@ npm run lint             # 运行ESLint
 
 ### 组件设计
 - 遵循Material Design 3规范
-- 12px圆角（borderRadius）
-- 流畅的过渡动画（300ms cubic-bezier）
+- 16-26px圆角（液态玻璃效果）
+- 流畅的过渡动画（300-400ms cubic-bezier）
 - 响应式断点：xs, sm, md, lg, xl
+- 多层材质叠加（4层玻璃效果）
+- Backdrop Filter模糊和透明度
+- 动态悬停效果和缩放动画
 
 ## 🚧 待实现功能
 
