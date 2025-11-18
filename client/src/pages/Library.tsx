@@ -2,6 +2,8 @@ import { Box, Container, Typography, Tabs, Tab, Grid } from '@mui/material';
 import { useState } from 'react';
 import { TrackList } from '@/components/TrackList/TrackList';
 import { AlbumCard } from '@/components/AlbumCard/AlbumCard';
+import { AlbumCardMaterial } from '@/components/AlbumCard/AlbumCardMaterial';
+import { useUIStore } from '@/stores/uiStore';
 import { Track, Album } from '@/types';
 
 // Mock data
@@ -56,6 +58,9 @@ const mockAlbums: Album[] = [
 
 export function Library() {
   const [tabValue, setTabValue] = useState(0);
+  const { style } = useUIStore();
+
+  const AlbumCardComponent = style === 'liquid-glass' ? AlbumCard : AlbumCardMaterial;
 
   return (
     <Box sx={{ pb: 12 }}>
@@ -80,7 +85,7 @@ export function Library() {
           <Grid container spacing={3}>
             {mockAlbums.map((album) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={album.id}>
-                <AlbumCard album={album} />
+                <AlbumCardComponent album={album} />
               </Grid>
             ))}
           </Grid>

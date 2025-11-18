@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { TrackList } from '@/components/TrackList/TrackList';
-import { AlbumCard } from '@/components/AlbumCard/AlbumCard';
 import { Track } from '@/types';
 import { useMusicStore } from '@/stores/musicStore';
 

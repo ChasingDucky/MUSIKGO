@@ -2,9 +2,11 @@ import { useMemo } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import { useThemeStore } from './stores/themeStore';
+import { useUIStore } from './stores/uiStore';
 import { getTheme } from './theme/theme';
 import { Sidebar } from './components/Layout/Sidebar';
 import { PlayerBar } from './components/Player/PlayerBar';
+import { PlayerBarMaterial } from './components/Player/PlayerBarMaterial';
 import { AudioPlayer } from './components/Player/AudioPlayer';
 import { DynamicBackground } from './components/Common/DynamicBackground';
 import { Home } from './pages/Home';
@@ -15,12 +17,13 @@ import { Playlists } from './pages/Playlists';
 
 function App() {
   const { mode, monetPalette } = useThemeStore();
+  const { style } = useUIStore();
   const theme = useMemo(() => getTheme(mode, monetPalette), [mode, monetPalette]);
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <DynamicBackground />
+      {style === 'liquid-glass' && <DynamicBackground />}
       <BrowserRouter>
         <Box sx={{ display: 'flex', height: '100vh' }}>
           <Sidebar />
@@ -43,7 +46,7 @@ function App() {
             </Routes>
           </Box>
         </Box>
-        <PlayerBar />
+        {style === 'liquid-glass' ? <PlayerBar /> : <PlayerBarMaterial />}
         <AudioPlayer />
       </BrowserRouter>
     </ThemeProvider>

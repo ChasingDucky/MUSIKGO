@@ -2,8 +2,10 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Typography, Grid, Stack } from '@mui/material';
 import { AlbumCard } from '@/components/AlbumCard/AlbumCard';
+import { AlbumCardMaterial } from '@/components/AlbumCard/AlbumCardMaterial';
 import { Album } from '@/types';
 import { useMusicStore } from '@/stores/musicStore';
+import { useUIStore } from '@/stores/uiStore';
 import { LoadingSpinner } from '@/components/Common/LoadingSpinner';
 
 // Mock data - will be replaced with API calls
@@ -67,6 +69,9 @@ const mockAlbums: Album[] = [
 export function Home() {
   const navigate = useNavigate();
   const { fetchTracks, isLoading } = useMusicStore();
+  const { style } = useUIStore();
+
+  const AlbumCardComponent = style === 'liquid-glass' ? AlbumCard : AlbumCardMaterial;
 
   useEffect(() => {
     fetchTracks();
@@ -94,7 +99,7 @@ export function Home() {
           <Grid container spacing={3}>
             {mockAlbums.map((album) => (
               <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={album.id}>
-                <AlbumCard
+                <AlbumCardComponent
                   album={album}
                   onClick={(a) => navigate(`/album/${a.id}`)}
                 />
@@ -110,7 +115,7 @@ export function Home() {
             <Grid container spacing={3}>
               {mockAlbums.slice(0, 4).map((album) => (
                 <Grid item xs={12} sm={6} md={3} key={album.id}>
-                  <AlbumCard
+                  <AlbumCardComponent
                     album={album}
                     onClick={(a) => navigate(`/album/${a.id}`)}
                   />
@@ -127,7 +132,7 @@ export function Home() {
             <Grid container spacing={3}>
               {mockAlbums.slice(2).map((album) => (
                 <Grid item xs={12} sm={6} md={3} key={album.id}>
-                  <AlbumCard
+                  <AlbumCardComponent
                     album={album}
                     onClick={(a) => navigate(`/album/${a.id}`)}
                   />

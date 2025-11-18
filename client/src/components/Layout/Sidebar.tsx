@@ -8,15 +8,17 @@ import {
   Box,
   Typography,
   Divider,
+  Stack,
 } from '@mui/material';
 import {
   Home,
   Search,
   LibraryMusic,
   Favorite,
-  Add,
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { StyleToggle } from './StyleToggle';
+import { useThemeStore } from '@/stores/themeStore';
 
 const DRAWER_WIDTH = 240;
 
@@ -34,6 +36,7 @@ const libraryItems = [
 export function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { mode, toggleMode } = useThemeStore();
 
   return (
     <Drawer
@@ -51,9 +54,12 @@ export function Sidebar() {
       }}
     >
       <Box sx={{ p: 3 }}>
-        <Typography variant="h5" fontWeight={700} color="primary">
-          MUSIKGO
-        </Typography>
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="h5" fontWeight={700} color="primary">
+            MUSIKGO
+          </Typography>
+          <StyleToggle />
+        </Stack>
       </Box>
 
       <List>

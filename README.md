@@ -15,7 +15,10 @@
 - **明暗主题** - 支持浅色和深色模式无缝切换
 - **流畅动画** - Material Design 3标准动画效果
 
-### 💎 液态玻璃视觉效果
+### 💎 双UI风格系统
+支持在以下两种UI风格之间自由切换：
+
+**液态玻璃风格 (Liquid Glass)**
 - **多层玻璃材质** - 使用SVG滤镜和背景模糊实现真实玻璃质感
 - **动态背景** - 基于莫奈配色的动画渐变背景
 - **浮动元素** - 三个动画浮动色块，随主题色变化
@@ -23,6 +26,13 @@
 - **毛玻璃效果** - Backdrop Filter实现的模糊和半透明效果
 - **多层合成** - 外层置换、模糊覆盖、锐化边缘、内部反射四层叠加
 - **深度感** - 内阴影和高光营造3D玻璃质感
+
+**传统Material UI风格**
+- **标准Material Design** - 遵循Material Design 3规范的传统卡片和组件
+- **清晰易读** - 更加简洁的界面，适合偏好传统设计的用户
+- **稳定高效** - 基于MUI组件库的标准实现
+
+**一键切换** - 点击侧边栏顶部的切换按钮即可在两种风格间无缝切换
 
 ### 🎵 完整音乐播放器
 - ▶️ **播放控制** - 播放、暂停、上一首、下一首
@@ -140,6 +150,75 @@ npm run dev:server  # 后端: http://localhost:3000
 7. **访问应用**
 打开浏览器访问 [http://localhost:5173](http://localhost:5173)
 
+### 使用Docker部署
+
+**环境要求:**
+- Docker 20.10+
+- Docker Compose 2.0+
+
+**部署步骤:**
+
+1. **克隆仓库**
+```bash
+git clone <repository-url>
+cd MUSIKGO
+```
+
+2. **配置环境变量**
+
+复制示例配置文件：
+```bash
+cp .env.docker .env
+```
+
+编辑 `.env` 文件，根据需要修改配置（特别是生产环境下的 JWT_SECRET）：
+```env
+JWT_SECRET=change-this-to-a-secure-random-string-in-production
+MONGODB_URI=mongodb://mongodb:27017/musikgo
+PORT=3000
+NODE_ENV=production
+VITE_API_URL=http://localhost:3000/api
+```
+
+3. **启动所有服务**
+```bash
+docker-compose up -d
+```
+
+这将启动：
+- MongoDB数据库 (端口27017)
+- Node.js后端API (端口3000)
+- Nginx前端服务器 (端口80)
+
+4. **访问应用**
+打开浏览器访问 [http://localhost](http://localhost)
+
+5. **查看日志**
+```bash
+# 查看所有服务日志
+docker-compose logs -f
+
+# 查看特定服务日志
+docker-compose logs -f client
+docker-compose logs -f server
+docker-compose logs -f mongodb
+```
+
+6. **停止服务**
+```bash
+docker-compose down
+
+# 同时删除数据卷（谨慎使用）
+docker-compose down -v
+```
+
+**生产环境注意事项:**
+- 务必修改 `JWT_SECRET` 为安全的随机字符串
+- 配置适当的域名和HTTPS证书
+- 考虑使用环境变量管理敏感信息
+- 定期备份MongoDB数据卷
+- 监控容器资源使用情况
+
 ## 📁 项目结构
 
 ```
@@ -156,12 +235,16 @@ MUSIKGO/
 │   │   │   │   ├── EmptyState.tsx
 │   │   │   │   └── AnimatedCard.tsx
 │   │   │   ├── Layout/           # 布局组件
-│   │   │   │   ├── Sidebar.tsx
+│   │   │   │   ├── Sidebar.tsx           # 侧边栏（含风格切换）
+│   │   │   │   ├── StyleToggle.tsx       # UI风格切换按钮
 │   │   │   │   └── Header.tsx
 │   │   │   ├── Player/           # 播放器组件
 │   │   │   │   ├── AudioPlayer.tsx
-│   │   │   │   └── PlayerBar.tsx
+│   │   │   │   ├── PlayerBar.tsx         # 液态玻璃播放器
+│   │   │   │   └── PlayerBarMaterial.tsx # Material UI播放器
 │   │   │   ├── AlbumCard/        # 专辑卡片
+│   │   │   │   ├── AlbumCard.tsx         # 液态玻璃版本
+│   │   │   │   └── AlbumCardMaterial.tsx # Material UI版本
 │   │   │   ├── TrackList/        # 曲目列表
 │   │   │   └── Playlist/         # 播放列表组件
 │   │   ├── pages/                # 页面组件
@@ -173,7 +256,8 @@ MUSIKGO/
 │   │   ├── stores/               # Zustand状态管理
 │   │   │   ├── playerStore.ts    # 播放器状态
 │   │   │   ├── themeStore.ts     # 主题状态
-│   │   │   └── musicStore.ts     # 音乐数据状态
+│   │   │   ├── musicStore.ts     # 音乐数据状态
+│   │   │   └── uiStore.ts        # UI风格状态
 │   │   ├── services/             # API服务
 │   │   │   └── api.ts
 │   │   ├── theme/                # 主题系统
@@ -182,6 +266,9 @@ MUSIKGO/
 │   │   ├── types/                # TypeScript类型定义
 │   │   ├── App.tsx               # 根组件
 │   │   └── main.tsx              # 入口文件
+│   ├── Dockerfile                # 前端Docker镜像
+│   ├── nginx.conf                # Nginx配置
+│   ├── .dockerignore             # Docker忽略文件
 │   └── package.json
 │
 ├── server/                         # Node.js后端API
@@ -201,8 +288,12 @@ MUSIKGO/
 │   │   ├── utils/                # 工具函数
 │   │   │   └── seedData.ts
 │   │   └── index.ts              # 服务器入口
+│   ├── Dockerfile                # 后端Docker镜像
+│   ├── .dockerignore             # Docker忽略文件
 │   └── package.json
 │
+├── docker-compose.yml             # Docker Compose配置
+├── .env.docker                    # Docker环境变量示例
 ├── package.json                   # 根package.json
 ├── README.md                      # 项目文档
 └── CONTRIBUTING.md               # 贡献指南
@@ -235,6 +326,30 @@ MUSIKGO/
 - 三个动画浮动渐变色块
 - 响应专辑封面颜色提取
 - 平滑的颜色过渡动画
+
+### UI风格切换系统
+位于 `client/src/stores/uiStore.ts`
+
+支持在两种UI风格之间自由切换：
+- **Liquid Glass** - 液态玻璃风格，iOS风格的现代玻璃效果
+- **Material** - 传统Material UI风格，标准的卡片和组件
+
+```typescript
+// 使用示例
+import { useUIStore } from '@/stores/uiStore';
+
+const { style, toggleStyle } = useUIStore();
+
+// 条件渲染组件
+const AlbumCardComponent = style === 'liquid-glass' ? AlbumCard : AlbumCardMaterial;
+const PlayerComponent = style === 'liquid-glass' ? PlayerBar : PlayerBarMaterial;
+```
+
+**实现特点:**
+- 使用Zustand进行状态管理，支持持久化
+- 条件渲染不同版本的组件
+- 无缝切换，用户设置自动保存
+- 所有主要组件都有两个版本实现
 
 ### 莫奈取色系统
 位于 `client/src/theme/monetColors.ts`
