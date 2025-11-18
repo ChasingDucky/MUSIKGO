@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Track from '../models/Track';
 
 // Get all tracks
-export const getAllTracks = async (req: Request, res: Response) => {
+export const getAllTracks = async (_req: Request, res: Response) => {
   try {
     const tracks = await Track.find().sort({ createdAt: -1 });
     res.json({ success: true, data: tracks });
@@ -22,7 +22,7 @@ export const getTrackById = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: track });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -41,7 +41,7 @@ export const searchTracks = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: tracks });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -72,7 +72,7 @@ export const updateTrack = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: track });
   } catch (error) {
-    res.status(400).json({ success: false, message: 'Invalid data', error });
+    return res.status(400).json({ success: false, message: 'Invalid data', error });
   }
 };
 
@@ -87,6 +87,6 @@ export const deleteTrack = async (req: Request, res: Response) => {
 
     res.json({ success: true, message: 'Track deleted' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };

@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Track from '../models/Track';
 import { connectDatabase } from '../config/database';

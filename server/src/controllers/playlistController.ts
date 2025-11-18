@@ -25,7 +25,7 @@ export const getPlaylistById = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: playlist });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
 
@@ -56,7 +56,7 @@ export const updatePlaylist = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: playlist });
   } catch (error) {
-    res.status(400).json({ success: false, message: 'Invalid data', error });
+    return res.status(400).json({ success: false, message: 'Invalid data', error });
   }
 };
 
@@ -79,7 +79,7 @@ export const addTrackToPlaylist = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: playlist });
   } catch (error) {
-    res.status(400).json({ success: false, message: 'Invalid data', error });
+    return res.status(400).json({ success: false, message: 'Invalid data', error });
   }
 };
 
@@ -101,7 +101,7 @@ export const removeTrackFromPlaylist = async (req: Request, res: Response) => {
 
     res.json({ success: true, data: playlist });
   } catch (error) {
-    res.status(400).json({ success: false, message: 'Invalid data', error });
+    return res.status(400).json({ success: false, message: 'Invalid data', error });
   }
 };
 
@@ -116,6 +116,6 @@ export const deletePlaylist = async (req: Request, res: Response) => {
 
     res.json({ success: true, message: 'Playlist deleted' });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error', error });
+    return res.status(500).json({ success: false, message: 'Server error', error });
   }
 };
