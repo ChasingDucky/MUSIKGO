@@ -64,6 +64,8 @@
 - **Toast通知** - 优雅的操作反馈提示
 - **歌曲收藏** - 收藏喜欢的歌曲到"Liked Songs"播放列表
 - **静音控制** - 一键静音/取消静音功能（M键或点击音量图标）
+- **播放动画** - 专辑封面旋转、音频可视化、脉冲效果等丰富动画
+- **实时视觉反馈** - 播放状态指示器、音频频谱动画
 
 ## 🛠 技术栈
 
@@ -449,6 +451,50 @@ const likedTracks = getLikedTracks();
 - 播放模式控制（随机、循环）
 - 音量和进度同步
 - 状态持久化
+
+### 播放动画系统
+位于 `client/src/components/Player/`
+
+**PlayingAlbumCover组件** (`PlayingAlbumCover.tsx`)
+- 播放时的专辑封面旋转动画（20秒一圈）
+- 脉冲效果的播放指示器
+- 支持黑胶唱片效果（可选）
+- 播放状态实时视觉反馈
+- 可自定义大小、圆角样式
+
+```typescript
+// 使用示例
+<PlayingAlbumCover
+  coverUrl={track.coverUrl}
+  title={track.title}
+  size={48}
+  variant="rounded"
+  showVinyl={false}
+/>
+```
+
+**AudioVisualizer组件** (`AudioVisualizer.tsx`)
+- 音频频谱可视化（5条跳动的频谱条）
+- 播放时的随机跳动动画
+- 平滑的缓入缓出效果
+- 可自定义颜色、大小、间距
+
+```typescript
+// 使用示例
+<AudioVisualizer
+  bars={5}
+  height={24}
+  width={50}
+  color="rgba(255, 255, 255, 0.6)"
+  gap={3}
+/>
+```
+
+**动画特点:**
+- 使用MUI的keyframes创建流畅动画
+- 自动响应播放/暂停状态
+- 低性能开销，使用CSS动画
+- 支持自定义动画参数
 
 ### API服务层
 位于 `client/src/services/api.ts`

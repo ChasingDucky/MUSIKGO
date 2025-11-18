@@ -19,6 +19,8 @@ import {
 import { usePlayerStore } from '@/stores/playerStore';
 import { LiquidGlass } from '@/components/Common/LiquidGlass';
 import { LiquidGlassButton } from '@/components/Common/LiquidGlassButton';
+import { PlayingAlbumCover } from './PlayingAlbumCover';
+import { AudioVisualizer } from './AudioVisualizer';
 import { useNavigate } from 'react-router-dom';
 
 function formatTime(seconds: number): string {
@@ -140,23 +142,22 @@ export function PlayerBar() {
           <Stack direction="row" alignItems="center" spacing={2}>
             {/* Track Info */}
             <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1, minWidth: 0 }}>
-              <Avatar
-                src={currentTrack.coverUrl}
-                alt={currentTrack.title}
+              <PlayingAlbumCover
+                coverUrl={currentTrack.coverUrl}
+                title={currentTrack.title}
+                size={48}
                 variant="rounded"
-                sx={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 2,
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                }}
+                showVinyl={false}
               />
               <Box sx={{ minWidth: 0, flex: 1 }}>
                 <Typography
                   variant="body1"
                   noWrap
                   fontWeight={600}
-                  sx={{ color: 'rgba(255, 255, 255, 0.95)' }}
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.95)',
+                    transition: 'opacity 0.3s ease',
+                  }}
                 >
                   {currentTrack.title}
                 </Typography>
@@ -168,6 +169,13 @@ export function PlayerBar() {
                   {currentTrack.artist}
                 </Typography>
               </Box>
+              <AudioVisualizer
+                bars={5}
+                height={24}
+                width={50}
+                color="rgba(255, 255, 255, 0.6)"
+                gap={3}
+              />
             </Stack>
 
             {/* Playback Controls */}

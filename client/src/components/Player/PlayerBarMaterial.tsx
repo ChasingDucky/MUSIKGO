@@ -19,6 +19,8 @@ import {
   VolumeOff,
 } from '@mui/icons-material';
 import { usePlayerStore } from '@/stores/playerStore';
+import { PlayingAlbumCover } from './PlayingAlbumCover';
+import { AudioVisualizer } from './AudioVisualizer';
 
 function formatTime(seconds: number): string {
   if (isNaN(seconds)) return '0:00';
@@ -103,11 +105,12 @@ export function PlayerBarMaterial() {
         <Stack direction="row" alignItems="center" spacing={2}>
           {/* Track Info */}
           <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1, minWidth: 0 }}>
-            <Avatar
-              src={currentTrack.coverUrl}
-              alt={currentTrack.title}
+            <PlayingAlbumCover
+              coverUrl={currentTrack.coverUrl}
+              title={currentTrack.title}
+              size={56}
               variant="rounded"
-              sx={{ width: 56, height: 56 }}
+              showVinyl={false}
             />
             <Box sx={{ minWidth: 0, flex: 1 }}>
               <Typography variant="body2" noWrap fontWeight={500}>
@@ -117,6 +120,13 @@ export function PlayerBarMaterial() {
                 {currentTrack.artist}
               </Typography>
             </Box>
+            <AudioVisualizer
+              bars={5}
+              height={28}
+              width={50}
+              color="primary.main"
+              gap={3}
+            />
           </Stack>
 
           {/* Playback Controls */}
