@@ -3,7 +3,6 @@ import {
   Slider,
   Stack,
   Typography,
-  Avatar,
 } from '@mui/material';
 import {
   PlayArrow,
@@ -35,7 +34,6 @@ export function PlayerBar() {
   const {
     currentTrack,
     isPlaying,
-    volume,
     currentTime,
     duration,
     repeatMode,
@@ -43,7 +41,6 @@ export function PlayerBar() {
     togglePlayPause,
     next,
     previous,
-    setVolume,
     seek,
     toggleRepeat,
     toggleShuffle,
@@ -55,10 +52,6 @@ export function PlayerBar() {
 
   const handleSeek = (_: Event, value: number | number[]) => {
     seek(value as number);
-  };
-
-  const handleVolumeChange = (_: Event, value: number | number[]) => {
-    setVolume((value as number) / 100);
   };
 
   return (

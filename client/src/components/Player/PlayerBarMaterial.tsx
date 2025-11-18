@@ -5,7 +5,6 @@ import {
   Stack,
   Typography,
   Card,
-  Avatar,
 } from '@mui/material';
 import {
   PlayArrow,
@@ -135,11 +134,34 @@ export function PlayerBarMaterial() {
               onClick={toggleShuffle}
               color={shuffleMode ? 'primary' : 'default'}
               size="small"
+              sx={{
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  bgcolor: 'action.hover',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              }}
             >
               <Shuffle />
             </IconButton>
 
-            <IconButton onClick={previous} size="small">
+            <IconButton
+              onClick={previous}
+              size="small"
+              sx={{
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  bgcolor: 'action.hover',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              }}
+            >
               <SkipPrevious />
             </IconButton>
 
@@ -149,19 +171,54 @@ export function PlayerBarMaterial() {
               sx={{
                 bgcolor: 'primary.main',
                 color: 'primary.contrastText',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
                 '&:hover': {
                   bgcolor: 'primary.dark',
+                  transform: 'scale(1.1)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25)',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                  boxShadow: '0 1px 4px rgba(0, 0, 0, 0.2)',
                 },
               }}
             >
               {isPlaying ? <Pause /> : <PlayArrow />}
             </IconButton>
 
-            <IconButton onClick={next} size="small">
+            <IconButton
+              onClick={next}
+              size="small"
+              sx={{
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  bgcolor: 'action.hover',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              }}
+            >
               <SkipNext />
             </IconButton>
 
-            <IconButton onClick={toggleRepeat} color={repeatMode !== 'off' ? 'primary' : 'default'} size="small">
+            <IconButton
+              onClick={toggleRepeat}
+              color={repeatMode !== 'off' ? 'primary' : 'default'}
+              size="small"
+              sx={{
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  bgcolor: 'action.hover',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              }}
+            >
               {repeatMode === 'one' ? <RepeatOne /> : <Repeat />}
             </IconButton>
           </Stack>
@@ -172,6 +229,16 @@ export function PlayerBarMaterial() {
               size="small"
               onClick={toggleMute}
               color={isMuted || volume === 0 ? 'default' : 'primary'}
+              sx={{
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  bgcolor: 'action.hover',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
+                },
+              }}
             >
               {isMuted || volume === 0 ? <VolumeOff /> : <VolumeUp />}
             </IconButton>

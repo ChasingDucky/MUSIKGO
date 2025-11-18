@@ -1,10 +1,28 @@
-import { CardMedia, Typography, Box } from '@mui/material';
+import { CardMedia, Typography, Box, keyframes } from '@mui/material';
 import { PlayArrow } from '@mui/icons-material';
 import { Album } from '@/types';
-import { useState } from 'react';
+import { useState, MouseEvent } from 'react';
 import { applyMonetTheme } from '@/theme/monetColors';
 import { useThemeStore } from '@/stores/themeStore';
 import { LiquidGlass } from '@/components/Common/LiquidGlass';
+
+const float = keyframes`
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+`;
+
+const shimmer = keyframes`
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+`;
 
 interface AlbumCardProps {
   album: Album;
@@ -13,6 +31,8 @@ interface AlbumCardProps {
 
 export function AlbumCard({ album, onClick }: AlbumCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
   const { setMonetPalette } = useThemeStore();
 
   const handleCardClick = () => {
@@ -30,23 +50,75 @@ export function AlbumCard({ album, onClick }: AlbumCardProps) {
     }
   };
 
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!isHovered) return;
+
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateXValue = ((y - centerY) / centerY) * -8; // Reduced from -10
+    const rotateYValue = ((x - centerX) / centerX) * 8;
+
+    setRotateX(rotateXValue);
+    setRotateY(rotateYValue);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setRotateX(0);
+    setRotateY(0);
+  };
+
   return (
     <Box
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       onClick={handleCardClick}
       sx={{
         position: 'relative',
         cursor: 'pointer',
-        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-        transform: isHovered ? 'translateY(-12px) scale(1.02)' : 'translateY(0) scale(1)',
+        perspective: '1000px',
+        transition: 'transform 0.1s ease',
       }}
     >
+      <Box
+        sx={{
+          position: 'relative',
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          transform: isHovered
+            ? `translateY(-12px) scale(1.02) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+            : 'translateY(0) scale(1) rotateX(0deg) rotateY(0deg)',
+          transformStyle: 'preserve-3d',
+        }}
+      >
       <LiquidGlass
         borderRadius="16px"
         intensity="light"
         sx={{
           overflow: 'hidden',
+          position: 'relative',
+          '&::before': isHovered
+            ? {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background:
+                  'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
+                backgroundSize: '200% 100%',
+                animation: `${shimmer} 2s ease-in-out infinite`,
+                zIndex: 1,
+                pointerEvents: 'none',
+              }
+            : undefined,
         }}
       >
         <Box sx={{ position: 'relative' }}>
@@ -60,6 +132,7 @@ export function AlbumCard({ album, onClick }: AlbumCardProps) {
               objectFit: 'cover',
               transition: 'transform 0.4s ease',
               transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+              filter: isHovered ? 'brightness(0.8)' : 'brightness(1)',
             }}
           />
           {isHovered && (
@@ -78,25 +151,33 @@ export function AlbumCard({ album, onClick }: AlbumCardProps) {
                 backdropFilter: 'blur(10px)',
                 boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
                 cursor: 'pointer',
-                transition: 'all 0.2s',
-                animation: 'slideUp 0.3s ease',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                animation: `slideUp 0.3s ease, ${float} 2s ease-in-out infinite`,
                 '@keyframes slideUp': {
                   from: {
                     opacity: 0,
-                    transform: 'translateY(10px)',
+                    transform: 'translateY(10px) scale(0.8)',
                   },
                   to: {
                     opacity: 1,
-                    transform: 'translateY(0)',
+                    transform: 'translateY(0) scale(1)',
                   },
                 },
                 '&:hover': {
-                  transform: 'scale(1.1)',
+                  transform: 'scale(1.15)',
                   bgcolor: 'rgba(255, 255, 255, 1)',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.4)',
+                },
+                '&:active': {
+                  transform: 'scale(0.95)',
                 },
               }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCardClick();
+              }}
             >
-              <PlayArrow sx={{ fontSize: 32, color: '#000' }} />
+              <PlayArrow sx={{ fontSize: 32, color: '#000', ml: 0.5 }} />
             </Box>
           )}
         </Box>
@@ -123,6 +204,7 @@ export function AlbumCard({ album, onClick }: AlbumCardProps) {
           )}
         </Box>
       </LiquidGlass>
+      </Box>
     </Box>
   );
 }

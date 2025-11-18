@@ -4,17 +4,33 @@ import {
   ListItemButton,
   ListItemAvatar,
   ListItemText,
-  Avatar,
   IconButton,
   Typography,
   Box,
+  Grow,
+  keyframes,
 } from '@mui/material';
-import { PlayArrow, Pause, MoreVert, Favorite, FavoriteBorder } from '@mui/icons-material';
+import { MoreVert, Favorite, FavoriteBorder } from '@mui/icons-material';
 import { Track } from '@/types';
 import { usePlayerStore } from '@/stores/playerStore';
 import { useLikedSongsStore } from '@/stores/likedSongsStore';
 import { useToastStore } from '@/stores/toastStore';
 import { PlayingAlbumCover } from '@/components/Player/PlayingAlbumCover';
+
+const heartBeat = keyframes`
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  75% {
+    transform: scale(1.2);
+  }
+`;
 
 interface TrackListProps {
   tracks: Track[];
@@ -28,7 +44,7 @@ function formatDuration(seconds: number): string {
 }
 
 export function TrackList({ tracks, onTrackClick }: TrackListProps) {
-  const { currentTrack, isPlaying, setQueue, togglePlayPause } = usePlayerStore();
+  const { currentTrack, setQueue, togglePlayPause } = usePlayerStore();
   const { toggleLike, isLiked } = useLikedSongsStore();
   const { showToast } = useToastStore();
 
@@ -59,13 +75,17 @@ export function TrackList({ tracks, onTrackClick }: TrackListProps) {
     <List>
       {tracks.map((track, index) => {
         const isCurrentTrack = currentTrack?.id === track.id;
-        const isTrackPlaying = isCurrentTrack && isPlaying;
 
         return (
-          <ListItem
+          <Grow
+            in={true}
+            timeout={300 + index * 50}
+            style={{ transformOrigin: '0 0 0' }}
             key={track.id}
-            disablePadding
-            secondaryAction={
+          >
+            <ListItem
+              disablePadding
+              secondaryAction={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Typography variant="body2" color="text.secondary" sx={{ minWidth: 50 }}>
                   {formatDuration(track.duration)}
@@ -76,14 +96,32 @@ export function TrackList({ tracks, onTrackClick }: TrackListProps) {
                   onClick={(e) => handleLikeClick(e, track)}
                   sx={{
                     color: isLiked(track.id) ? 'error.main' : 'text.secondary',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': {
                       color: 'error.main',
+                      transform: 'scale(1.15)',
+                    },
+                    '&:active': {
+                      animation: `${heartBeat} 0.4s ease-in-out`,
                     },
                   }}
                 >
                   {isLiked(track.id) ? <Favorite /> : <FavoriteBorder />}
                 </IconButton>
-                <IconButton edge="end" size="small">
+                <IconButton
+                  edge="end"
+                  size="small"
+                  sx={{
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '&:hover': {
+                      transform: 'scale(1.15)',
+                      bgcolor: 'action.hover',
+                    },
+                    '&:active': {
+                      transform: 'scale(0.95)',
+                    },
+                  }}
+                >
                   <MoreVert />
                 </IconButton>
               </Box>
@@ -122,7 +160,8 @@ export function TrackList({ tracks, onTrackClick }: TrackListProps) {
                 }
               />
             </ListItemButton>
-          </ListItem>
+            </ListItem>
+          </Grow>
         );
       })}
     </List>
