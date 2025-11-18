@@ -1,19 +1,40 @@
-import { Box, BoxProps } from '@mui/material';
+import { Box, BoxProps, useMediaQuery, useTheme } from '@mui/material';
 import { ReactNode } from 'react';
 
 interface LiquidGlassProps extends BoxProps {
   children: ReactNode;
   borderRadius?: string | number;
   intensity?: 'light' | 'medium' | 'strong';
+  mobileOnly?: boolean; // 只在移动端生效
 }
 
 export function LiquidGlass({
   children,
   borderRadius = '26px',
   intensity = 'medium',
+  mobileOnly = true,
   sx,
   ...props
 }: LiquidGlassProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  // 如果设置了mobileOnly且不是移动端，则只渲染普通容器
+  if (mobileOnly && !isMobile) {
+    return (
+      <Box
+        {...props}
+        sx={{
+          position: 'relative',
+          borderRadius,
+          ...sx,
+        }}
+      >
+        {children}
+      </Box>
+    );
+  }
+
   const intensityConfig = {
     light: {
       cover: 'rgba(0, 0, 0, 0.08)',

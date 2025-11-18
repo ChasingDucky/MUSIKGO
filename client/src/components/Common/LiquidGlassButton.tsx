@@ -1,4 +1,4 @@
-import { Box, IconButton } from '@mui/material';
+import { Box } from '@mui/material';
 import { ReactNode } from 'react';
 import { LiquidGlass } from './LiquidGlass';
 
@@ -7,6 +7,7 @@ interface LiquidGlassButtonProps {
   onClick?: () => void;
   size?: 'small' | 'medium' | 'large';
   variant?: 'circular' | 'rounded';
+  mobileOnly?: boolean; // 只在移动端生效
 }
 
 export function LiquidGlassButton({
@@ -14,6 +15,7 @@ export function LiquidGlassButton({
   onClick,
   size = 'medium',
   variant = 'circular',
+  mobileOnly = true,
 }: LiquidGlassButtonProps) {
   const sizeMap = {
     small: 42,
@@ -27,6 +29,7 @@ export function LiquidGlassButton({
   return (
     <LiquidGlass
       borderRadius={borderRadius}
+      mobileOnly={mobileOnly}
       sx={{
         width: dimension,
         height: dimension,

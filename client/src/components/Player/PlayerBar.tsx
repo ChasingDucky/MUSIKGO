@@ -16,7 +16,6 @@ import {
   Search,
 } from '@mui/icons-material';
 import { usePlayerStore } from '@/stores/playerStore';
-import { LiquidGlass } from '@/components/Common/LiquidGlass';
 import { LiquidGlassButton } from '@/components/Common/LiquidGlassButton';
 import { PlayingAlbumCover } from './PlayingAlbumCover';
 import { AudioVisualizer } from './AudioVisualizer';
@@ -56,7 +55,7 @@ export function PlayerBar() {
 
   return (
     <>
-      {/* SVG Filter Definition */}
+      {/* SVG Filter Definition - Only shown on mobile */}
       <svg style={{ display: 'none' }}>
         <defs>
           <filter
@@ -84,20 +83,21 @@ export function PlayerBar() {
           px: 2,
         }}
       >
-        {/* Home Button */}
-        <LiquidGlassButton onClick={() => navigate('/')} size="medium">
-          <Home sx={{ fontSize: 28, color: 'rgba(255, 255, 255, 0.8)' }} />
+        {/* Home Button - Liquid Glass only on mobile */}
+        <LiquidGlassButton onClick={() => navigate('/')} size="medium" mobileOnly={true}>
+          <Home sx={{ fontSize: 28, color: 'text.primary' }} />
         </LiquidGlassButton>
 
-        {/* Main Player */}
-        <LiquidGlass
-          borderRadius="26px"
-          intensity="medium"
+        {/* Main Player - Regular card without liquid glass */}
+        <Box
           sx={{
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
             p: 2,
+            borderRadius: '26px',
+            bgcolor: 'background.paper',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.1)',
           }}
         >
           {/* Progress Bar */}
@@ -108,24 +108,21 @@ export function PlayerBar() {
               max={duration || 100}
               onChange={handleSeek}
               sx={{
-                color: 'rgba(255, 255, 255, 0.9)',
+                color: 'primary.main',
                 height: 4,
                 '& .MuiSlider-thumb': {
                   width: 12,
                   height: 12,
-                  backgroundColor: '#fff',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
                   '&:hover, &.Mui-focusVisible': {
-                    boxShadow: '0px 0px 0px 8px rgba(255, 255, 255, 0.16)',
+                    boxShadow: '0px 0px 0px 8px rgba(103, 80, 164, 0.16)',
                   },
                 },
                 '& .MuiSlider-track': {
                   border: 'none',
-                  background: 'linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)',
                 },
                 '& .MuiSlider-rail': {
-                  opacity: 0.3,
-                  backgroundColor: '#fff',
+                  opacity: 0.2,
                 },
               }}
             />
@@ -148,7 +145,7 @@ export function PlayerBar() {
                   noWrap
                   fontWeight={600}
                   sx={{
-                    color: 'rgba(255, 255, 255, 0.95)',
+                    color: 'text.primary',
                     transition: 'opacity 0.3s ease',
                   }}
                 >
@@ -157,7 +154,7 @@ export function PlayerBar() {
                 <Typography
                   variant="caption"
                   noWrap
-                  sx={{ color: 'rgba(255, 255, 255, 0.7)' }}
+                  sx={{ color: 'text.secondary' }}
                 >
                   {currentTrack.artist}
                 </Typography>
@@ -166,113 +163,75 @@ export function PlayerBar() {
                 bars={5}
                 height={24}
                 width={50}
-                color="rgba(255, 255, 255, 0.6)"
+                color="primary.main"
                 gap={3}
               />
             </Stack>
 
             {/* Playback Controls */}
             <Stack direction="row" spacing={1} alignItems="center">
-              <Box
-                onClick={toggleShuffle}
-                sx={{
-                  cursor: 'pointer',
-                  opacity: shuffleMode ? 1 : 0.6,
-                  transition: 'opacity 0.2s',
-                  '&:hover': { opacity: 1 },
-                }}
-              >
-                <Shuffle sx={{ fontSize: 24, color: 'rgba(255, 255, 255, 0.9)' }} />
-              </Box>
+              <LiquidGlassButton onClick={toggleShuffle} size="small" mobileOnly={true}>
+                <Shuffle
+                  sx={{
+                    fontSize: 24,
+                    color: shuffleMode ? 'primary.main' : 'text.secondary',
+                  }}
+                />
+              </LiquidGlassButton>
 
-              <Box
-                onClick={previous}
-                sx={{
-                  cursor: 'pointer',
-                  opacity: 0.8,
-                  transition: 'opacity 0.2s',
-                  '&:hover': { opacity: 1 },
-                }}
-              >
-                <SkipPrevious sx={{ fontSize: 32, color: 'rgba(255, 255, 255, 0.9)' }} />
-              </Box>
+              <LiquidGlassButton onClick={previous} size="small" mobileOnly={true}>
+                <SkipPrevious sx={{ fontSize: 32, color: 'text.primary' }} />
+              </LiquidGlassButton>
 
-              <Box
-                onClick={togglePlayPause}
-                sx={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  bgcolor: 'rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all 0.2s',
-                  '&:hover': {
-                    transform: 'scale(1.1)',
-                    bgcolor: 'rgba(255, 255, 255, 0.3)',
-                  },
-                  '&:active': {
-                    transform: 'scale(0.95)',
-                  },
-                }}
-              >
+              <LiquidGlassButton onClick={togglePlayPause} size="medium" mobileOnly={true}>
                 {isPlaying ? (
-                  <Pause sx={{ fontSize: 28, color: '#fff' }} />
+                  <Pause sx={{ fontSize: 28, color: 'primary.main' }} />
                 ) : (
-                  <PlayArrow sx={{ fontSize: 28, color: '#fff' }} />
+                  <PlayArrow sx={{ fontSize: 28, color: 'primary.main' }} />
                 )}
-              </Box>
+              </LiquidGlassButton>
 
-              <Box
-                onClick={next}
-                sx={{
-                  cursor: 'pointer',
-                  opacity: 0.8,
-                  transition: 'opacity 0.2s',
-                  '&:hover': { opacity: 1 },
-                }}
-              >
-                <SkipNext sx={{ fontSize: 32, color: 'rgba(255, 255, 255, 0.9)' }} />
-              </Box>
+              <LiquidGlassButton onClick={next} size="small" mobileOnly={true}>
+                <SkipNext sx={{ fontSize: 32, color: 'text.primary' }} />
+              </LiquidGlassButton>
 
-              <Box
-                onClick={toggleRepeat}
-                sx={{
-                  cursor: 'pointer',
-                  opacity: repeatMode !== 'off' ? 1 : 0.6,
-                  transition: 'opacity 0.2s',
-                  '&:hover': { opacity: 1 },
-                }}
-              >
+              <LiquidGlassButton onClick={toggleRepeat} size="small" mobileOnly={true}>
                 {repeatMode === 'one' ? (
-                  <RepeatOne sx={{ fontSize: 24, color: 'rgba(255, 255, 255, 0.9)' }} />
+                  <RepeatOne
+                    sx={{
+                      fontSize: 24,
+                      color: 'primary.main',
+                    }}
+                  />
                 ) : (
-                  <Repeat sx={{ fontSize: 24, color: 'rgba(255, 255, 255, 0.9)' }} />
+                  <Repeat
+                    sx={{
+                      fontSize: 24,
+                      color: repeatMode !== 'off' ? 'primary.main' : 'text.secondary',
+                    }}
+                  />
                 )}
-              </Box>
+              </LiquidGlassButton>
             </Stack>
 
             {/* Time Display */}
             <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 100 }}>
-              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 {formatTime(currentTime)}
               </Typography>
-              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled' }}>
                 /
               </Typography>
-              <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 {formatTime(duration)}
               </Typography>
             </Stack>
           </Stack>
-        </LiquidGlass>
+        </Box>
 
-        {/* Search Button */}
-        <LiquidGlassButton onClick={() => navigate('/search')} size="medium">
-          <Search sx={{ fontSize: 28, color: 'rgba(255, 255, 255, 0.8)' }} />
+        {/* Search Button - Liquid Glass only on mobile */}
+        <LiquidGlassButton onClick={() => navigate('/search')} size="medium" mobileOnly={true}>
+          <Search sx={{ fontSize: 28, color: 'text.primary' }} />
         </LiquidGlassButton>
       </Box>
     </>
