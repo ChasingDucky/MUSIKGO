@@ -3,22 +3,28 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline, Box } from '@mui/material';
 import { useThemeStore } from './stores/themeStore';
 import { useUIStore } from './stores/uiStore';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { getTheme } from './theme/theme';
 import { Sidebar } from './components/Layout/Sidebar';
 import { PlayerBar } from './components/Player/PlayerBar';
 import { PlayerBarMaterial } from './components/Player/PlayerBarMaterial';
 import { AudioPlayer } from './components/Player/AudioPlayer';
 import { DynamicBackground } from './components/Common/DynamicBackground';
+import { ToastContainer } from './components/Common/ToastContainer';
 import { Home } from './pages/Home';
 import { Library } from './pages/Library';
 import { Search } from './pages/Search';
 import { AlbumDetail } from './pages/AlbumDetail';
 import { Playlists } from './pages/Playlists';
+import { LikedSongs } from './pages/LikedSongs';
 
 function App() {
   const { mode, monetPalette } = useThemeStore();
   const { style } = useUIStore();
   const theme = useMemo(() => getTheme(mode, monetPalette), [mode, monetPalette]);
+
+  // Enable keyboard shortcuts
+  useKeyboardShortcuts();
 
   return (
     <ThemeProvider theme={theme}>
@@ -42,12 +48,13 @@ function App() {
               <Route path="/playlists" element={<Playlists />} />
               <Route path="/album/:id" element={<AlbumDetail />} />
               <Route path="/playlist/:id" element={<AlbumDetail />} />
-              <Route path="/liked" element={<Box sx={{ p: 4 }}>Liked Songs Coming Soon</Box>} />
+              <Route path="/liked" element={<LikedSongs />} />
             </Routes>
           </Box>
         </Box>
         {style === 'liquid-glass' ? <PlayerBar /> : <PlayerBarMaterial />}
         <AudioPlayer />
+        <ToastContainer />
       </BrowserRouter>
     </ThemeProvider>
   );

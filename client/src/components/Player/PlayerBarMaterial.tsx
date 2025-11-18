@@ -32,6 +32,7 @@ export function PlayerBarMaterial() {
     currentTrack,
     isPlaying,
     volume,
+    isMuted,
     currentTime,
     duration,
     repeatMode,
@@ -40,6 +41,7 @@ export function PlayerBarMaterial() {
     next,
     previous,
     setVolume,
+    toggleMute,
     seek,
     toggleRepeat,
     toggleShuffle,
@@ -156,12 +158,16 @@ export function PlayerBarMaterial() {
 
           {/* Volume Control */}
           <Stack direction="row" spacing={1} alignItems="center" sx={{ width: 150 }}>
-            <IconButton size="small" onClick={() => setVolume(volume > 0 ? 0 : 0.7)}>
-              {volume === 0 ? <VolumeOff /> : <VolumeUp />}
+            <IconButton
+              size="small"
+              onClick={toggleMute}
+              color={isMuted || volume === 0 ? 'default' : 'primary'}
+            >
+              {isMuted || volume === 0 ? <VolumeOff /> : <VolumeUp />}
             </IconButton>
             <Slider
               size="small"
-              value={volume * 100}
+              value={isMuted ? 0 : volume * 100}
               onChange={handleVolumeChange}
               sx={{
                 '& .MuiSlider-thumb': {

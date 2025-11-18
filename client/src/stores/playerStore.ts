@@ -6,6 +6,8 @@ interface PlayerState {
   currentTrack: Track | null;
   isPlaying: boolean;
   volume: number;
+  isMuted: boolean;
+  previousVolume: number;
   currentTime: number;
   duration: number;
 
@@ -26,6 +28,7 @@ interface PlayerState {
   pause: () => void;
   togglePlayPause: () => void;
   setVolume: (volume: number) => void;
+  toggleMute: () => void;
   seek: (time: number) => void;
   next: () => void;
   previous: () => void;
@@ -42,6 +45,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   currentTrack: null,
   isPlaying: false,
   volume: 0.7,
+  isMuted: false,
+  previousVolume: 0.7,
   currentTime: 0,
   duration: 0,
   queue: [],
@@ -86,9 +91,27 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
 
   setVolume: (volume) => {
     const { audioElement } = get();
-    set({ volume });
+    set({ volume, isMuted: volume === 0 });
     if (audioElement) {
       audioElement.volume = volume;
+    }
+  },
+
+  toggleMute: () => {
+    const { isMuted, volume, previousVolume, audioElement } = get();
+    if (isMuted) {
+      // Unmute: restore previous volume
+      const newVolume = previousVolume > 0 ? previousVolume : 0.7;
+      set({ isMuted: false, volume: newVolume });
+      if (audioElement) {
+        audioElement.volume = newVolume;
+      }
+    } else {
+      // Mute: save current volume and set to 0
+      set({ isMuted: true, previousVolume: volume, volume: 0 });
+      if (audioElement) {
+        audioElement.volume = 0;
+      }
     }
   },
 

@@ -60,6 +60,10 @@
 - **液态玻璃UI** - iOS风格的液态玻璃界面元素
 - **浮动播放器** - 底部浮动的玻璃质感播放控制栏
 - **动画效果** - 卡片悬停缩放、元素淡入淡出等丰富动画
+- **键盘快捷键** - 支持空格键播放/暂停、方向键控制等快捷操作
+- **Toast通知** - 优雅的操作反馈提示
+- **歌曲收藏** - 收藏喜欢的歌曲到"Liked Songs"播放列表
+- **静音控制** - 一键静音/取消静音功能（M键或点击音量图标）
 
 ## 🛠 技术栈
 
@@ -364,6 +368,77 @@ const PlayerComponent = style === 'liquid-glass' ? PlayerBar : PlayerBarMaterial
 // 使用示例
 const palette = await applyMonetTheme(albumCoverUrl);
 setMonetPalette(palette);
+```
+
+### 键盘快捷键系统
+位于 `client/src/hooks/useKeyboardShortcuts.ts`
+
+支持以下快捷键操作：
+- **空格键** - 播放/暂停当前曲目
+- **→ (右箭头)** - 跳到下一首
+- **← (左箭头)** - 返回上一首
+- **↑ (上箭头)** - 增加音量
+- **↓ (下箭头)** - 减小音量
+- **M** - 静音/取消静音
+
+```typescript
+// 使用示例
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+
+function App() {
+  useKeyboardShortcuts(); // 启用键盘快捷键
+  // ...
+}
+```
+
+**实现特点:**
+- 自动忽略输入框内的按键事件
+- 支持全局快捷键监听
+- 与播放器状态实时同步
+
+### Toast通知系统
+位于 `client/src/stores/toastStore.ts` 和 `client/src/components/Common/ToastContainer.tsx`
+
+提供优雅的操作反馈提示：
+- 支持success、error、info、warning四种类型
+- 自动定时关闭
+- 可手动关闭
+- 支持多个toast同时显示
+
+```typescript
+// 使用示例
+import { useToastStore } from '@/stores/toastStore';
+
+const { showToast } = useToastStore();
+
+showToast('Added to Liked Songs', 'success');
+showToast('Failed to load track', 'error');
+```
+
+### 歌曲收藏系统
+位于 `client/src/stores/likedSongsStore.ts`
+
+功能特点：
+- 收藏/取消收藏歌曲
+- 持久化存储（localStorage）
+- 专属"Liked Songs"页面展示所有收藏
+- 在曲目列表中显示收藏状态
+- 收藏操作即时反馈（Toast通知）
+
+```typescript
+// 使用示例
+import { useLikedSongsStore } from '@/stores/likedSongsStore';
+
+const { toggleLike, isLiked, getLikedTracks } = useLikedSongsStore();
+
+// 切换收藏状态
+toggleLike(track);
+
+// 检查是否已收藏
+const liked = isLiked(trackId);
+
+// 获取所有收藏的歌曲
+const likedTracks = getLikedTracks();
 ```
 
 ### 播放器核心

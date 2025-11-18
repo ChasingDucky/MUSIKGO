@@ -9,9 +9,11 @@ import {
   Typography,
   Box,
 } from '@mui/material';
-import { PlayArrow, Pause, MoreVert } from '@mui/icons-material';
+import { PlayArrow, Pause, MoreVert, Favorite, FavoriteBorder } from '@mui/icons-material';
 import { Track } from '@/types';
 import { usePlayerStore } from '@/stores/playerStore';
+import { useLikedSongsStore } from '@/stores/likedSongsStore';
+import { useToastStore } from '@/stores/toastStore';
 
 interface TrackListProps {
   tracks: Track[];
@@ -26,6 +28,8 @@ function formatDuration(seconds: number): string {
 
 export function TrackList({ tracks, onTrackClick }: TrackListProps) {
   const { currentTrack, isPlaying, setQueue, togglePlayPause } = usePlayerStore();
+  const { toggleLike, isLiked } = useLikedSongsStore();
+  const { showToast } = useToastStore();
 
   const handleTrackClick = (track: Track, index: number) => {
     if (currentTrack?.id === track.id) {
@@ -40,6 +44,16 @@ export function TrackList({ tracks, onTrackClick }: TrackListProps) {
     onTrackClick?.(track, index);
   };
 
+  const handleLikeClick = (e: React.MouseEvent, track: Track) => {
+    e.stopPropagation();
+    const wasLiked = isLiked(track.id);
+    toggleLike(track);
+    showToast(
+      wasLiked ? 'Removed from Liked Songs' : 'Added to Liked Songs',
+      wasLiked ? 'info' : 'success'
+    );
+  };
+
   return (
     <List>
       {tracks.map((track, index) => {
@@ -51,10 +65,23 @@ export function TrackList({ tracks, onTrackClick }: TrackListProps) {
             key={track.id}
             disablePadding
             secondaryAction={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography variant="body2" color="text.secondary">
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ minWidth: 50 }}>
                   {formatDuration(track.duration)}
                 </Typography>
+                <IconButton
+                  edge="end"
+                  size="small"
+                  onClick={(e) => handleLikeClick(e, track)}
+                  sx={{
+                    color: isLiked(track.id) ? 'error.main' : 'text.secondary',
+                    '&:hover': {
+                      color: 'error.main',
+                    },
+                  }}
+                >
+                  {isLiked(track.id) ? <Favorite /> : <FavoriteBorder />}
+                </IconButton>
                 <IconButton edge="end" size="small">
                   <MoreVert />
                 </IconButton>
